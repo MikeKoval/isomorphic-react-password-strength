@@ -1,7 +1,4 @@
-import './style.css';
-
 import React from 'react';
-import classnames from 'classnames';
 import zxcvbn from 'zxcvbn';
 
 export default class ReactPasswordStrength extends React.Component {
@@ -37,24 +34,26 @@ export default class ReactPasswordStrength extends React.Component {
   }
 
   render() {
+    const styles = require('./style.css');
     const { score, password, isValid } = this.state;
     const { scoreWords, inputProps, minLength } = this.props;
 
     // hack because template literals can't be used as strings in objects for some reason
     const strengthClass = `is-strength-${score}`;
-    const conditionalClasses = {};
-    conditionalClasses[strengthClass] = password.length > 0;
 
-    const wrapperClasses = classnames(`ReactPasswordStrength` , conditionalClasses);
-    const inputClasses = classnames('ReactPasswordStrength-input', {
-      'is-password-valid': isValid,
-      'is-password-invalid': isValid === false && password.length > 0,
-    });
+    const wrapperClasses = ['ReactPasswordStrength'];
+    if (isValid) wrapperClasses.push('is-password-valid');
+    if (isValid === false && password.length > 0) wrapperClasses.push('is-password-invalid');
+    if (password.length > 0) wrapperClasses.push(strengthClass);
+
+    const inputClasses = ['ReactPasswordStrength-input'];
+    if (isValid) inputClasses.push('is-password-valid');
+    if (isValid === false && password.length > 0) inputClasses.push('is-password-invalid');
 
     return (
-      <div className={wrapperClasses}>
+      <div className={wrapperClasses.join(' ')}>
         <input
-          className={inputClasses}
+          className={inputClasses.join(' ')}
           type="password"
           {...inputProps}
           onChange={this.handleChange.bind(this)}
